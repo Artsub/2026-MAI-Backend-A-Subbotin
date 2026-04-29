@@ -1,0 +1,35 @@
+bombarding http://localhost:80/public/photo.jpg with 1000 request(s) using 50 connection(s)
+ 1000 / 1000 [======================================================================================] 100.00% 2481/s 0s
+Done!
+Statistics        Avg      Stdev        Max
+  Reqs/sec      4189.97    1125.19    4910.98
+  Latency       11.67ms    24.00ms   239.12ms
+  HTTP codes:
+    1xx - 0, 2xx - 1000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:   828.46MB/s
+PS D:\bomb> .\bombardier.exe -c 50 -n 1000 http://127.0.0.1:8000/
+Bombarding http://127.0.0.1:8000/ with 1000 request(s) using 50 connection(s)
+ 1000 / 1000 [=======================================================================================] 100.00% 77/s 12s
+Done!
+Statistics        Avg      Stdev        Max
+  Reqs/sec        78.77      39.12     333.64
+  Latency      622.76ms    73.24ms   666.57ms
+  HTTP codes:
+    1xx - 0, 2xx - 1000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:    16.83KB/s
+PS D:\bomb> .\bombardier.exe -c 50 -n 100000 http://127.0.0.1:8000/
+PS D:\bomb> .\bombardier.exe -c 50 -n 1000 http://localhost:80/gunicorn/
+Bombarding http://localhost:80/gunicorn/ with 1000 request(s) using 50 connection(s)
+ 1000 / 1000 [=======================================================================================] 100.00% 829/s 1s
+Done!
+Statistics        Avg      Stdev        Max
+  Reqs/sec       914.63     841.37    2185.25
+  Latency       37.98ms   146.96ms      1.09s
+  HTTP codes:
+    1xx - 0, 2xx - 31, 3xx - 0, 4xx - 0, 5xx - 392
+    others - 577
+  Errors:
+    the server closed connection before returning the first response byte. Make sure the server returns 'Connection: close' response header before closing the connection - 577
+  Throughput:   372.02KB/s
