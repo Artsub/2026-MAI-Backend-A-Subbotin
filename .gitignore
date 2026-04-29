@@ -2,7 +2,7 @@
 *.aux
 *.log
 pgdata
-venv
+.venv
 __pycache__
 .DS_Store
 local_settings.py
