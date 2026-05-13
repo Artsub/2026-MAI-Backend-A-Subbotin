@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Genre(models.Model):
@@ -32,22 +31,10 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=100, blank=True)
     birth_date = models.DateField(blank=True, null=True)
 
+    favorite = models.ManyToManyField(
+        Movie,
+        related_name='favorited_by',
+        blank = True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-class Favorite(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='favorites',
-        help_text='Пользователь, добавивший в избранное'
-    )
-    movie = models.ForeignKey(
-        Movie,
-        on_delete=models.CASCADE,
-        related_name='favorited_by',
-        help_text='Фильм в избранном'
-    )
-    note = models.CharField(max_length=200, blank=True, help_text='Личная заметка к фильму')
-    added_at = models.DateTimeField(auto_now_add=True)

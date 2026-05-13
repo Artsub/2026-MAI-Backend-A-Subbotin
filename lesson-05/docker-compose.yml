@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: mai_backend_db
+    volumes:
+      - postgres_:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: 'MoviesDB'
+      POSTGRES_USER: 'MoviesDBUser'
+      POSTGRES_PASSWORD: '1234'
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U MoviesDBUser -d MoviesDB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: mai_backend_web
+    command: >
+      sh -c "python manage.py migrate &&
+             waitress-serve --host=0.0.0.0 --port=8001 movie_project.wsgi:application"
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    environment:
+      DATABASE_URL: postgres://MoviesDBUser:1234@db:5432/MoviesDB
+      DJANGO_SETTINGS_MODULE: movie_project.settings
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/admin/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  nginx:
+    image: nginx:alpine
+    container_name: mai_backend_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      web:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_:
+  static_volume:
+  media_volume:
